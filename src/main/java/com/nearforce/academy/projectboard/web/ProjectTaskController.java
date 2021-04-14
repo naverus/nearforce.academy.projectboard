@@ -3,11 +3,13 @@ package com.nearforce.academy.projectboard.web;
 import com.nearforce.academy.projectboard.domain.ProjectTask;
 import com.nearforce.academy.projectboard.service.ProjectTaskService;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +33,7 @@ public class ProjectTaskController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> addProjectTaskToBoard(@Valid @RequestBody ProjectTask projectTask, BindingResult bindingResult) {
+    public ResponseEntity<?> saveProjectTask(@Valid @RequestBody ProjectTask projectTask, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = bindingResult.getFieldErrors().stream()
                     .collect(Collectors.toMap(FieldError::getField, DefaultMessageSourceResolvable::getDefaultMessage));
@@ -53,5 +55,15 @@ public class ProjectTaskController {
             return new ResponseEntity<>("Project not found with id " + id + ". ", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(result.get(), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProjectTaskById(@PathVariable Long id) {
+        try {
+            projectTaskService.delete(id);
+        } catch (EmptyResultDataAccessException e) {
+            return new ResponseEntity<>("Project not found with id " + id + ". ", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>("Project with id " + id + " was deleted. ", HttpStatus.OK);
     }
 }
