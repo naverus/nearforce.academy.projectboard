@@ -33,23 +33,23 @@ public class ProjectTaskController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> saveProjectTask(@Valid @RequestBody ProjectTask projectTask, BindingResult bindingResult) {
+    public ResponseEntity<?> saveOrUpdate(@Valid @RequestBody ProjectTask projectTask, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = bindingResult.getFieldErrors().stream()
                     .collect(Collectors.toMap(FieldError::getField, DefaultMessageSourceResolvable::getDefaultMessage));
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
-        ProjectTask resultProjectTask = projectTaskService.saveOrUpdateProjectTask(projectTask);
+        ProjectTask resultProjectTask = projectTaskService.saveOrUpdate(projectTask);
         return new ResponseEntity<>(resultProjectTask, HttpStatus.CREATED);
     }
 
     @GetMapping("/all")
-    public Iterable<ProjectTask> getAllProjectTasks() {
+    public Iterable<ProjectTask> getAll() {
         return projectTaskService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProjectTaskById(@PathVariable Long id) {
+    public ResponseEntity<?> getById(@PathVariable Long id) {
         Optional<ProjectTask> result = projectTaskService.findById(id);
         if (result.isEmpty()) {
             return new ResponseEntity<>("Project not found with id " + id + ". ", HttpStatus.NOT_FOUND);
@@ -58,7 +58,7 @@ public class ProjectTaskController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProjectTaskById(@PathVariable Long id) {
+    public ResponseEntity<?> deleteById(@PathVariable Long id) {
         try {
             projectTaskService.delete(id);
         } catch (EmptyResultDataAccessException e) {

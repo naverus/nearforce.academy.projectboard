@@ -15,7 +15,7 @@ public class ProjectTaskService {
         this.projectTaskRepository = projectTaskRepository;
     }
 
-    public ProjectTask saveOrUpdateProjectTask(ProjectTask projectTask) {
+    public ProjectTask saveOrUpdate(ProjectTask projectTask) {
         if (projectTask.getStatus() == null || projectTask.getStatus().equals("")) {
             projectTask.setStatus("TO_DO");
         }
